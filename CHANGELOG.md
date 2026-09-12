@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.2
+
+- Updated the required BepInExPack Valheim dependency to `5.4.2350` and rebuilt against BepInEx `5.4.23.5`.
+
 ## 1.2.1
 
 - Cleared Valheim's drag-item state and drag icon immediately when the held item is removed through `Delete`.

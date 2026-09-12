@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework><LangVersion>latest</LangVersion><Nullable>enable</Nullable>
-    <AssemblyName>DadsBetterVal</AssemblyName><RootNamespace>DadsBetterVal</RootNamespace><Version>1.2.1</Version>
+    <AssemblyName>DadsBetterVal</AssemblyName><RootNamespace>DadsBetterVal</RootNamespace><Version>1.2.2</Version>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo><Deterministic>true</Deterministic>
     <ValheimManagedPath Condition="'$(ValheimManagedPath)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Valheim\valheim_Data\Managed</ValheimManagedPath>
     <PublicizedPath Condition="'$(PublicizedPath)' == ''">C:\Users\DudeB\ValheimModArchives\Default-Profile-Archive-20260911-115308-009\BuildRefs\Valheim-1.0.12-publicized-resolved</PublicizedPath>

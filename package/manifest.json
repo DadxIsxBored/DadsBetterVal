@@ -1,7 +1,7 @@
 {
   "name": "DadsBetterVal",
-  "version_number": "1.2.1",
+  "version_number": "1.2.2",
   "website_url": "https://github.com/DadxIsxBored/DadsBetterVal",
   "description": "Area repair, safe recycling and reclaiming, clock, improved smelting, and unrestricted building for Valheim 1.0.12.",
-  "dependencies": ["denikson-BepInExPack_Valheim-5.4.2333"]
+  "dependencies": ["denikson-BepInExPack_Valheim-5.4.2350"]
 }
