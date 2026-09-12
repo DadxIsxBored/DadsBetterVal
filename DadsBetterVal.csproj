@@ -12,6 +12,8 @@
     <Reference Include="0Harmony"><HintPath>$(BepInExCorePath)\0Harmony.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="assembly_valheim"><HintPath>$(PublicizedPath)\assembly_valheim_publicized.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="assembly_utils"><HintPath>$(PublicizedPath)\assembly_utils_publicized.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="assembly_guiutils"><HintPath>$(PublicizedPath)\assembly_guiutils_publicized.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="Splatform"><HintPath>$(PublicizedPath)\Splatform_publicized.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine"><HintPath>$(ValheimManagedPath)\UnityEngine.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.CoreModule"><HintPath>$(ValheimManagedPath)\UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
     <Reference Include="UnityEngine.InputLegacyModule"><HintPath>$(ValheimManagedPath)\UnityEngine.InputLegacyModule.dll</HintPath><Private>false</Private></Reference>

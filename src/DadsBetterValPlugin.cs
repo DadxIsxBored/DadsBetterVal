@@ -27,6 +27,7 @@ public sealed class DadsBetterValPlugin : BaseUnityPlugin
     internal static ConfigEntry<bool> QuickInsert = null!, AlternativeFuel = null!;
     internal static ConfigEntry<KeyCode> QuickInsertKey = null!;
     internal static ConfigEntry<string> SmelterFuelItems = null!, BlastFuelItems = null!;
+    internal static ConfigEntry<int> WoodFuel = null!, FineWoodFuel = null!, CoreWoodFuel = null!, SurtlingCoreFuel = null!, BlackCoreFuel = null!;
 
     private Harmony _harmony = null!;
     private void Awake()
@@ -53,6 +54,7 @@ public sealed class DadsBetterValPlugin : BaseUnityPlugin
         AlternativeFuel = Config.Bind("Smelting - Alternative Fuel", "Enabled", false, "Accept configured prefab or localized item names as furnace fuel.");
         SmelterFuelItems = Config.Bind("Smelting - Alternative Fuel", "Smelter Fuel Items", "Coal,Wood,FineWood,RoundLog,SurtlingCore,BlackCore", "Comma-separated acceptable prefab or localized item names.");
         BlastFuelItems = Config.Bind("Smelting - Alternative Fuel", "Blast Furnace Fuel Items", "Coal,Wood,FineWood,RoundLog,SurtlingCore,BlackCore", "Comma-separated acceptable prefab or localized item names.");
+        WoodFuel = Int("Smelting - Alternative Fuel", "Wood Fuel Value", 1); FineWoodFuel = Int("Smelting - Alternative Fuel", "Fine Wood Fuel Value", 2); CoreWoodFuel = Int("Smelting - Alternative Fuel", "Core Wood Fuel Value", 3); SurtlingCoreFuel = Int("Smelting - Alternative Fuel", "Surtling Core Fuel Value", 5); BlackCoreFuel = Int("Smelting - Alternative Fuel", "Black Core Fuel Value", 10);
         _harmony = new Harmony(Guid); _harmony.PatchAll();
     }
     private ConfigEntry<int> Int(string section, string key, int value) => Config.Bind(section, key, value, new ConfigDescription("Zero preserves the game value.", new AcceptableValueRange<int>(0, 10000)));

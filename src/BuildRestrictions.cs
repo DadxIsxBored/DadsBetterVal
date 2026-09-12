@@ -1,4 +1,6 @@
 using HarmonyLib;
+using System;
+using System.Reflection;
 using UnityEngine;
 
 namespace DadsBetterVal;
@@ -9,11 +11,12 @@ internal static class NoBuildZonePatch { private static void Postfix(ref bool __
 [HarmonyPatch(typeof(Player), "UpdatePlacementGhost")]
 internal static class PlacementPatch
 {
-    private static void Postfix(Player __instance)
+    private static readonly MethodInfo SetValid = AccessTools.Method(typeof(Player), "SetPlacementGhostValid", new[] { typeof(bool) });
+    private static void Postfix(Player __instance, GameObject ___m_placementGhost, ref Player.PlacementStatus ___m_placementStatus)
     {
-        if (!DadsBetterValPlugin.BuildRestrictionsRemoved.Value || !__instance.m_placementGhost) return;
-        __instance.m_placementStatus = Player.PlacementStatus.Valid;
-        __instance.SetPlacementGhostValid(true);
+        if (!DadsBetterValPlugin.BuildRestrictionsRemoved.Value || !___m_placementGhost) return;
+        ___m_placementStatus = Player.PlacementStatus.Valid;
+        SetValid.Invoke(__instance, new object[] { true });
     }
 }
 

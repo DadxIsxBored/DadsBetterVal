@@ -10,7 +10,19 @@ internal static class BetterSmelting
 {
     private static string Prefab(Smelter s) => Utils.GetPrefabName(s.gameObject).ToLowerInvariant();
     private static bool Blast(Smelter s) => Prefab(s).Contains("blastfurnace");
-    private static bool FuelMatches(Smelter s, ItemDrop.ItemData item)
+    private static int QueueSize(ZNetView view) => view != null && view.IsValid() ? view.GetZDO().GetInt(ZDOVars.s_queued) : 0;
+    private static float FuelAmount(ZNetView view) => view != null && view.IsValid() ? view.GetZDO().GetFloat(ZDOVars.s_fuel) : 0f;
+    private static ItemDrop.ItemData? Cookable(Smelter smelter, Inventory inventory)
+    {
+        foreach (Smelter.ItemConversion conversion in smelter.m_conversion)
+        {
+            if (!conversion?.m_from) continue;
+            ItemDrop.ItemData item = inventory.GetItem(conversion.m_from.m_itemData.m_shared.m_name, -1, false);
+            if (item != null) return item;
+        }
+        return null;
+    }
+    private static bool FuelMatches(Smelter s, ItemDrop.ItemData? item)
     {
         if (!DadsBetterValPlugin.AlternativeFuel.Value || item == null) return false;
         string list = Blast(s) ? DadsBetterValPlugin.BlastFuelItems.Value : DadsBetterValPlugin.SmelterFuelItems.Value;
@@ -21,6 +33,16 @@ internal static class BetterSmelting
             if (value.Equals(prefab, StringComparison.OrdinalIgnoreCase) || value.Equals(item.m_shared.m_name, StringComparison.OrdinalIgnoreCase)) return true;
         }
         return false;
+    }
+    private static int FuelValue(ItemDrop.ItemData item)
+    {
+        string name = (item.m_dropPrefab ? item.m_dropPrefab.name : item.m_shared.m_name).ToLowerInvariant();
+        if (name.Contains("blackcore") || name.Contains("black_core")) return DadsBetterValPlugin.BlackCoreFuel.Value;
+        if (name.Contains("surtling")) return DadsBetterValPlugin.SurtlingCoreFuel.Value;
+        if (name.Contains("finewood") || name.Contains("fine_wood")) return DadsBetterValPlugin.FineWoodFuel.Value;
+        if (name.Contains("roundlog") || name.Contains("corewood") || name.Contains("core_wood")) return DadsBetterValPlugin.CoreWoodFuel.Value;
+        if (name.Contains("wood")) return DadsBetterValPlugin.WoodFuel.Value;
+        return 1;
     }
 
     [HarmonyPatch("Awake"), HarmonyPostfix]
@@ -66,16 +88,16 @@ internal static class BetterSmelting
     }
 
     [HarmonyPatch("OnAddOre"), HarmonyPrefix]
-    private static bool AddOrePrefix(Smelter __instance, Humanoid user, ref bool __result)
+    private static bool AddOrePrefix(Smelter __instance, Humanoid user, ZNetView ___m_nview, ref bool __result)
     {
         if (!DadsBetterValPlugin.QuickInsert.Value || !Input.GetKey(DadsBetterValPlugin.QuickInsertKey.Value)) return true;
         int inserted = 0; Inventory inventory = user.GetInventory();
-        int remaining = Math.Max(0, __instance.m_maxOre - __instance.GetQueueSize());
+        int remaining = Math.Max(0, __instance.m_maxOre - QueueSize(___m_nview));
         while (remaining-- > 0)
         {
-            ItemDrop.ItemData item = __instance.FindCookableItem(inventory);
+            ItemDrop.ItemData? item = Cookable(__instance, inventory);
             if (item == null || !inventory.RemoveItem(item, 1)) break;
-            __instance.m_nview.InvokeRPC("RPC_AddOre", item.m_dropPrefab.name, item.m_cheated);
+            ___m_nview.InvokeRPC("RPC_AddOre", item.m_dropPrefab.name, item.m_cheated);
             inserted++;
         }
         if (inserted == 0) return true;
@@ -83,15 +105,15 @@ internal static class BetterSmelting
     }
 
     [HarmonyPatch("OnAddFuel"), HarmonyPrefix]
-    private static bool AddFuelPrefix(Smelter __instance, Humanoid user, ItemDrop.ItemData item, ref bool __result)
+    private static bool AddFuelPrefix(Smelter __instance, Humanoid user, ItemDrop.ItemData? item, ZNetView ___m_nview, ref bool __result)
     {
         bool quick = DadsBetterValPlugin.QuickInsert.Value && Input.GetKey(DadsBetterValPlugin.QuickInsertKey.Value);
         if (!quick && !FuelMatches(__instance, item)) return true;
         Inventory inventory = user.GetInventory(); int inserted = 0;
-        int remaining = Math.Max(0, __instance.m_maxFuel - Mathf.CeilToInt(__instance.GetFuel()));
+        int remaining = Math.Max(0, __instance.m_maxFuel - Mathf.CeilToInt(FuelAmount(___m_nview)));
         while (remaining-- > 0)
         {
-            ItemDrop.ItemData fuel = item;
+            ItemDrop.ItemData? fuel = item;
             if (fuel == null || !inventory.ContainsItem(fuel))
             {
                 fuel = null;
@@ -99,7 +121,11 @@ internal static class BetterSmelting
                     if (candidate.m_shared.m_name == __instance.m_fuelItem.m_itemData.m_shared.m_name || FuelMatches(__instance, candidate)) { fuel = candidate; break; }
             }
             if (fuel == null || (!FuelMatches(__instance, fuel) && fuel.m_shared.m_name != __instance.m_fuelItem.m_itemData.m_shared.m_name) || !inventory.RemoveItem(fuel, 1)) break;
-            __instance.m_nview.InvokeRPC("RPC_AddFuel"); inserted++;
+            int fuelValue = FuelMatches(__instance, fuel) ? Math.Max(1, FuelValue(fuel)) : 1;
+            int applied = Math.Min(fuelValue, remaining + 1);
+            for (int i = 0; i < applied; i++) ___m_nview.InvokeRPC("RPC_AddFuel");
+            inserted += applied;
+            remaining -= applied - 1;
             if (!quick) break;
             item = null;
         }
