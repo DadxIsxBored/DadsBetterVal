@@ -13,6 +13,7 @@ internal static class Recycling
 {
     internal static bool ReclaimMode;
     internal static Button? ReclaimButton;
+    internal static readonly List<Recipe> TemporaryDeleteRecipes = new List<Recipe>();
     private static readonly System.Reflection.MethodInfo UpdateCrafting = AccessTools.Method(typeof(InventoryGui), "UpdateCraftingPanel", new[] { typeof(bool) });
     private static readonly System.Reflection.MethodInfo AddRecipe = AccessTools.Method(typeof(InventoryGui), "AddRecipeToList");
     private static readonly System.Reflection.MethodInfo SelectRecipe = AccessTools.Method(typeof(InventoryGui), "SetRecipe");
@@ -40,9 +41,7 @@ internal static class Recycling
     {
         Recipe? recipe = ObjectDB.instance?.GetRecipe(source);
         if (recipe == null || recipe.m_resources == null || recipe.m_resources.Length == 0)
-        {
-            Player.m_localPlayer.Message(MessageHud.MessageType.Center, "No reclaim recipe"); return false;
-        }
+            return Delete(source, inventory);
         var returns = new List<(GameObject prefab, int amount)>();
         foreach (Piece.Requirement req in recipe.m_resources)
         {
@@ -52,7 +51,7 @@ internal static class Recycling
             int amount = Mathf.FloorToInt(total * DadsBetterValPlugin.RecycleRate.Value) * source.m_stack;
             if (amount > 0) returns.Add((req.m_resItem.gameObject, amount));
         }
-        if (returns.Count == 0) { Player.m_localPlayer.Message(MessageHud.MessageType.Center, "No materials returned"); return false; }
+        if (returns.Count == 0) return Delete(source, inventory);
 
         // Capacity is tested against a clone before the source item is touched.
         Inventory test = new Inventory("DadsBetterVal preflight", null, inventory.GetWidth(), inventory.GetHeight());
@@ -79,6 +78,25 @@ internal static class Recycling
         }
         Player.m_localPlayer.Message(MessageHud.MessageType.Center, "Item reclaimed");
         return true;
+    }
+
+    private static bool Delete(ItemDrop.ItemData source, Inventory inventory)
+    {
+        int amount = source.m_stack;
+        if (!inventory.RemoveItem(source)) return false;
+        Player.m_localPlayer.Message(MessageHud.MessageType.Center, amount > 1 ? $"Deleted {amount} items" : "Item deleted");
+        return true;
+    }
+
+    internal static Recipe CreateDeleteRecipe(ItemDrop.ItemData item)
+    {
+        Recipe recipe = ScriptableObject.CreateInstance<Recipe>();
+        recipe.hideFlags = HideFlags.HideAndDontSave;
+        recipe.m_item = item.m_dropPrefab.GetComponent<ItemDrop>();
+        recipe.m_amount = item.m_stack;
+        recipe.m_resources = Array.Empty<Piece.Requirement>();
+        TemporaryDeleteRecipes.Add(recipe);
+        return recipe;
     }
 }
 
@@ -108,12 +126,13 @@ internal static class ReclaimListPatch
         foreach (InventoryGui.RecipeDataPair pair in ___m_availableRecipes)
             if (pair.InterfaceElement) UnityEngine.Object.Destroy(pair.InterfaceElement);
         ___m_availableRecipes.Clear();
+        foreach (Recipe recipe in Recycling.TemporaryDeleteRecipes) if (recipe) UnityEngine.Object.Destroy(recipe);
+        Recycling.TemporaryDeleteRecipes.Clear();
         foreach (ItemDrop.ItemData item in Player.m_localPlayer.GetInventory().GetAllItems())
         {
             if (item.m_equipped) continue;
-            Recipe recipe = ObjectDB.instance.GetRecipe(item);
-            if (recipe != null && recipe.m_resources != null && recipe.m_resources.Length > 0)
-                Recycling.AddReclaimRecipe(__instance, Player.m_localPlayer, recipe, item);
+            Recipe recipe = ObjectDB.instance.GetRecipe(item) ?? Recycling.CreateDeleteRecipe(item);
+            Recycling.AddReclaimRecipe(__instance, Player.m_localPlayer, recipe, item);
         }
         Recycling.Select(__instance, ___m_availableRecipes.Count > 0 ? 0 : -1);
         Recycling.DrawRecipe(__instance, Player.m_localPlayer);
@@ -130,7 +149,9 @@ internal static class ReclaimDetailsPatch
         if (item == null) return;
         __instance.m_recipeIcon.sprite = item.GetIcon();
         __instance.m_recipeName.text = "Reclaim " + Localization.instance.Localize(item.m_shared.m_name);
-        __instance.m_recipeDecription.text = Localization.instance.Localize(ItemDrop.ItemData.GetTooltip(item, item.m_quality, false, Game.m_worldLevel)) + "\n\nReturns configured recipe materials.";
+        Recipe recipe = ObjectDB.instance.GetRecipe(item);
+        string action = recipe != null && recipe.m_resources != null && recipe.m_resources.Length > 0 ? "Returns configured recipe materials and removes the selected stack." : "Deletes the selected stack without material returns.";
+        __instance.m_recipeDecription.text = Localization.instance.Localize(ItemDrop.ItemData.GetTooltip(item, item.m_quality, false, Game.m_worldLevel)) + "\n\n" + action;
         TMP_Text label = __instance.m_craftButton.GetComponentInChildren<TMP_Text>(); if (label) label.text = "Reclaim";
         __instance.m_craftButton.interactable = true;
         foreach (GameObject requirement in __instance.m_recipeRequirementList) requirement.SetActive(false);

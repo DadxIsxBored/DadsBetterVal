@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.0
+
+- Made inventory `Delete` remove the full selected stack when no reclaim recipe exists.
+- Made zero-return recipes operate as deletion transactions.
+- Added base resources and other non-reclaimable items to the Reclaim tab as delete entries.
+- Kept crafted-item reclamation atomic: material returns are validated before the source stack is removed.
+
 ## 1.1.1
 
 - Enabled alternative furnace fuels by default.
