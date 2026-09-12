@@ -24,6 +24,9 @@ public sealed class DadsBetterValPlugin : BaseUnityPlugin
     internal static ConfigEntry<int> SmelterOre = null!, SmelterFuel = null!, BlastOre = null!, BlastFuel = null!, KilnInput = null!, WindmillInput = null!, SpinningInput = null!, EitrInput = null!, EitrFuel = null!, HoneyMax = null!;
     internal static ConfigEntry<float> GlobalSpeed = null!, SmelterSpeed = null!, BlastSpeed = null!, KilnSpeed = null!, WindmillSpeed = null!, SpinningSpeed = null!, EitrSpeed = null!, FermenterSpeed = null!, HoneySpeed = null!;
     internal static ConfigEntry<bool> AllOresInBlast = null!, WindmillIgnoresWind = null!;
+    internal static ConfigEntry<bool> QuickInsert = null!, AlternativeFuel = null!;
+    internal static ConfigEntry<KeyCode> QuickInsertKey = null!;
+    internal static ConfigEntry<string> SmelterFuelItems = null!, BlastFuelItems = null!;
 
     private Harmony _harmony = null!;
     private void Awake()
@@ -45,6 +48,11 @@ public sealed class DadsBetterValPlugin : BaseUnityPlugin
         GlobalSpeed = Float("Smelting - Speed", "Global Multiplier", 1f); SmelterSpeed = Float("Smelting - Speed", "Smelter Multiplier", 1f); BlastSpeed = Float("Smelting - Speed", "Blast Furnace Multiplier", 1f); KilnSpeed = Float("Smelting - Speed", "Charcoal Kiln Multiplier", 1f); WindmillSpeed = Float("Smelting - Speed", "Windmill Multiplier", 1f); SpinningSpeed = Float("Smelting - Speed", "Spinning Wheel Multiplier", 1f); EitrSpeed = Float("Smelting - Speed", "Eitr Refinery Multiplier", 1f); FermenterSpeed = Float("Smelting - Speed", "Fermenter Multiplier", 1f); HoneySpeed = Float("Smelting - Speed", "Beehive Multiplier", 1f);
         AllOresInBlast = Config.Bind("Smelting", "All Ores In Blast Furnace", true, "Allow normal smelter conversions in the blast furnace.");
         WindmillIgnoresWind = Config.Bind("Smelting", "Windmill Ignores Wind", false, "Run windmills at full power.");
+        QuickInsert = Config.Bind("Smelting", "Quick Insert", true, "Hold the configured key while using a machine to fill it.");
+        QuickInsertKey = Config.Bind("Smelting", "Quick Insert Key", KeyCode.LeftShift, "Modifier held while using a machine.");
+        AlternativeFuel = Config.Bind("Smelting - Alternative Fuel", "Enabled", false, "Accept configured prefab or localized item names as furnace fuel.");
+        SmelterFuelItems = Config.Bind("Smelting - Alternative Fuel", "Smelter Fuel Items", "Coal,Wood,FineWood,RoundLog,SurtlingCore,BlackCore", "Comma-separated acceptable prefab or localized item names.");
+        BlastFuelItems = Config.Bind("Smelting - Alternative Fuel", "Blast Furnace Fuel Items", "Coal,Wood,FineWood,RoundLog,SurtlingCore,BlackCore", "Comma-separated acceptable prefab or localized item names.");
         _harmony = new Harmony(Guid); _harmony.PatchAll();
     }
     private ConfigEntry<int> Int(string section, string key, int value) => Config.Bind(section, key, value, new ConfigDescription("Zero preserves the game value.", new AcceptableValueRange<int>(0, 10000)));

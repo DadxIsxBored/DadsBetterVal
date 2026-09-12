@@ -12,7 +12,7 @@ internal static class ClockHud
         private GUIStyle? _style;
         private void OnGUI()
         {
-            if (!DadsBetterValPlugin.ClockEnabled.Value || EnvMan.instance == null || Player.m_localPlayer == null || !Hud.IsUserHidden()) return;
+            if (!DadsBetterValPlugin.ClockEnabled.Value || EnvMan.instance == null || Player.m_localPlayer == null || Hud.IsUserHidden()) return;
             _style ??= new GUIStyle(GUI.skin.label) { alignment = TextAnchor.UpperCenter, fontStyle = FontStyle.Bold };
             _style.fontSize = DadsBetterValPlugin.ClockFontSize.Value;
             _style.normal.textColor = Color.white;
@@ -24,4 +24,3 @@ internal static class ClockHud
     }
     private static void Postfix(Hud __instance) { if (__instance.GetComponent<ClockDisplay>() == null) __instance.gameObject.AddComponent<ClockDisplay>(); }
 }
-

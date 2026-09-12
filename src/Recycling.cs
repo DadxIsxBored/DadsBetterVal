@@ -39,7 +39,13 @@ internal static class Recycling
         if (returns.Count == 0) { Player.m_localPlayer.Message(MessageHud.MessageType.Center, "No materials returned"); return; }
 
         // Capacity is tested against a clone before the source item is touched.
-        Inventory test = inventory.Clone();
+        Inventory test = new Inventory("DadsBetterVal preflight", null, inventory.GetWidth(), inventory.GetHeight());
+        foreach (ItemDrop.ItemData existing in inventory.GetAllItems())
+        {
+            ItemDrop.ItemData copy = existing.Clone();
+            copy.m_stack = existing.m_stack;
+            if (!test.AddItem(copy, copy.m_stack, copy.m_gridPos.x, copy.m_gridPos.y, true)) return;
+        }
         ItemDrop.ItemData testSource = test.GetItemAt(source.m_gridPos.x, source.m_gridPos.y);
         if (testSource == null || !test.RemoveItem(testSource)) return;
         foreach (var entry in returns)
@@ -59,4 +65,3 @@ internal static class Recycling
         Player.m_localPlayer.Message(MessageHud.MessageType.Center, "Item reclaimed");
     }
 }
-
