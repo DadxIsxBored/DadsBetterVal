@@ -10,7 +10,7 @@ public sealed class DadsBetterValPlugin : BaseUnityPlugin
 {
     public const string Guid = "com.dadisbored.dadsbetterval";
     public const string Name = "DadsBetterVal";
-    public const string Version = "1.0.0";
+    public const string Version = "1.1.0";
     internal static DadsBetterValPlugin Instance = null!;
     internal static ConfigEntry<bool> AreaRepairEnabled = null!;
     internal static ConfigEntry<float> AreaRepairRadius = null!;

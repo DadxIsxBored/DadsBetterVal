@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.0
+
+- Corrected Valheim 1.0.12 private-member access in placement, area repair, smelter insertion, and Reclaim UI patches.
+- Restored unrestricted placement while `noPlacementCost` is enabled.
+- Added runtime-member auditing to the release verification process.
+
 ## 1.0.0
 
 - Added configurable area repair with per-piece stamina and durability costs.
