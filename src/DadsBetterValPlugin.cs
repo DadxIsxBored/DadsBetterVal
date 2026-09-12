@@ -10,7 +10,7 @@ public sealed class DadsBetterValPlugin : BaseUnityPlugin
 {
     public const string Guid = "com.dadisbored.dadsbetterval";
     public const string Name = "DadsBetterVal";
-    public const string Version = "1.1.0";
+    public const string Version = "1.1.1";
     internal static DadsBetterValPlugin Instance = null!;
     internal static ConfigEntry<bool> AreaRepairEnabled = null!;
     internal static ConfigEntry<float> AreaRepairRadius = null!;
@@ -51,7 +51,7 @@ public sealed class DadsBetterValPlugin : BaseUnityPlugin
         WindmillIgnoresWind = Config.Bind("Smelting", "Windmill Ignores Wind", false, "Run windmills at full power.");
         QuickInsert = Config.Bind("Smelting", "Quick Insert", true, "Hold the configured key while using a machine to fill it.");
         QuickInsertKey = Config.Bind("Smelting", "Quick Insert Key", KeyCode.LeftShift, "Modifier held while using a machine.");
-        AlternativeFuel = Config.Bind("Smelting - Alternative Fuel", "Enabled", false, "Accept configured prefab or localized item names as furnace fuel.");
+        AlternativeFuel = Config.Bind("Smelting - Alternative Fuel", "Enabled", true, "Accept configured prefab or localized item names as furnace fuel.");
         SmelterFuelItems = Config.Bind("Smelting - Alternative Fuel", "Smelter Fuel Items", "Coal,Wood,FineWood,RoundLog,SurtlingCore,BlackCore", "Comma-separated acceptable prefab or localized item names.");
         BlastFuelItems = Config.Bind("Smelting - Alternative Fuel", "Blast Furnace Fuel Items", "Coal,Wood,FineWood,RoundLog,SurtlingCore,BlackCore", "Comma-separated acceptable prefab or localized item names.");
         WoodFuel = Int("Smelting - Alternative Fuel", "Wood Fuel Value", 1); FineWoodFuel = Int("Smelting - Alternative Fuel", "Fine Wood Fuel Value", 2); CoreWoodFuel = Int("Smelting - Alternative Fuel", "Core Wood Fuel Value", 3); SurtlingCoreFuel = Int("Smelting - Alternative Fuel", "Surtling Core Fuel Value", 5); BlackCoreFuel = Int("Smelting - Alternative Fuel", "Black Core Fuel Value", 10);

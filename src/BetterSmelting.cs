@@ -10,6 +10,11 @@ internal static class BetterSmelting
 {
     private static string Prefab(Smelter s) => Utils.GetPrefabName(s.gameObject).ToLowerInvariant();
     private static bool Blast(Smelter s) => Prefab(s).Contains("blastfurnace");
+    private static bool AlternativeFuelMachine(Smelter s)
+    {
+        string name = Prefab(s);
+        return name.Contains("smelter") || name.Contains("blastfurnace");
+    }
     private static int QueueSize(ZNetView view) => view != null && view.IsValid() ? view.GetZDO().GetInt(ZDOVars.s_queued) : 0;
     private static float FuelAmount(ZNetView view) => view != null && view.IsValid() ? view.GetZDO().GetFloat(ZDOVars.s_fuel) : 0f;
     private static ItemDrop.ItemData? Cookable(Smelter smelter, Inventory inventory)
@@ -108,12 +113,14 @@ internal static class BetterSmelting
     private static bool AddFuelPrefix(Smelter __instance, Humanoid user, ItemDrop.ItemData? item, ZNetView ___m_nview, ref bool __result)
     {
         bool quick = DadsBetterValPlugin.QuickInsert.Value && Input.GetKey(DadsBetterValPlugin.QuickInsertKey.Value);
-        if (!quick && !FuelMatches(__instance, item)) return true;
+        bool alternative = DadsBetterValPlugin.AlternativeFuel.Value && AlternativeFuelMachine(__instance);
+        if (!quick && !alternative) return true;
         Inventory inventory = user.GetInventory(); int inserted = 0;
         int remaining = Math.Max(0, __instance.m_maxFuel - Mathf.CeilToInt(FuelAmount(___m_nview)));
         while (remaining-- > 0)
         {
             ItemDrop.ItemData? fuel = item;
+            if (fuel != null && fuel.m_shared.m_name != __instance.m_fuelItem.m_itemData.m_shared.m_name && !FuelMatches(__instance, fuel)) fuel = null;
             if (fuel == null || !inventory.ContainsItem(fuel))
             {
                 fuel = null;

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.1
+
+- Enabled alternative furnace fuels by default.
+- Selected configured fuel items when Valheim supplies no coal item to the fuel interaction.
+
 ## 1.1.0
 
 - Corrected Valheim 1.0.12 private-member access in placement, area repair, smelter insertion, and Reclaim UI patches.
