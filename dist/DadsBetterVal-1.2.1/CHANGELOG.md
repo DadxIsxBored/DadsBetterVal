@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.1
+
+- Cleared Valheim's drag-item state and drag icon immediately when the held item is removed through `Delete`.
+
 ## 1.2.0
 
 - Made inventory `Delete` remove the full selected stack when no reclaim recipe exists.

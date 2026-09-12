@@ -20,11 +20,13 @@ internal static class Recycling
     private static readonly System.Reflection.MethodInfo UpdateRecipeMethod = AccessTools.Method(typeof(InventoryGui), "UpdateRecipe");
     private static readonly System.Reflection.MethodInfo HoveredElement = AccessTools.Method(typeof(InventoryGrid), "GetHoveredElement");
     private static readonly System.Reflection.MethodInfo ElementPosition = AccessTools.Method(typeof(InventoryGrid), "GetElementPos");
+    private static readonly System.Reflection.MethodInfo SetupDragItem = AccessTools.Method(typeof(InventoryGui), "SetupDragItem", new[] { typeof(ItemDrop.ItemData), typeof(Inventory), typeof(int) });
     internal static void Refresh(InventoryGui gui, bool focus = true) => UpdateCrafting.Invoke(gui, new object[] { focus });
     internal static void AddReclaimRecipe(InventoryGui gui, Player player, Recipe recipe, ItemDrop.ItemData item) => AddRecipe.Invoke(gui, new object[] { player, recipe, item, true });
     internal static void Select(InventoryGui gui, int index) => SelectRecipe.Invoke(gui, new object[] { index, false });
     internal static void DrawRecipe(InventoryGui gui, Player player) => UpdateRecipeMethod.Invoke(gui, new object[] { player, 0f });
-    private static void Postfix(InventoryGui __instance)
+    internal static void ClearDrag(InventoryGui gui) => SetupDragItem.Invoke(gui, new object?[] { null, null, 1 });
+    private static void Postfix(InventoryGui __instance, ItemDrop.ItemData? ___m_dragItem)
     {
         if (!DadsBetterValPlugin.RecycleEnabled.Value || !InventoryGui.IsVisible() || !Input.GetKeyDown(DadsBetterValPlugin.RecycleKey.Value)) return;
         InventoryGrid? grid = __instance.m_playerGrid;
@@ -34,7 +36,7 @@ internal static class Recycling
         Vector2i pos = (Vector2i)ElementPosition.Invoke(grid, new object[] { element });
         ItemDrop.ItemData item = grid.GetInventory().GetItemAt(pos.x, pos.y);
         if (item == null || item.m_equipped) return;
-        Recycle(item, grid.GetInventory());
+        if (Recycle(item, grid.GetInventory()) && ReferenceEquals(item, ___m_dragItem)) ClearDrag(__instance);
     }
 
     internal static bool Recycle(ItemDrop.ItemData source, Inventory inventory)
