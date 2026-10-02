@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.3
+
+- Fixed Reclaim tab MethodAccessException errors by reading Valheim's private recipe-pair data through cached reflection in the list, details, and action paths.
+- Build directly against the installed game assemblies so private game types cannot be called through publicized build references.
+
 ## 1.2.2
 
 - Updated the required BepInExPack Valheim dependency to `5.4.2350` and rebuilt against BepInEx `5.4.23.5`.

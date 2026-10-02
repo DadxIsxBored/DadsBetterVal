@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace DadsBetterVal;
 
-[HarmonyPatch(typeof(Player), nameof(Player.Repair))]
+[HarmonyPatch(typeof(Player), "Repair")]
 internal static class AreaRepair
 {
     private static readonly FieldInfo AllPieces = AccessTools.Field(typeof(Piece), "s_allPieces");

@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using HarmonyLib;
 using TMPro;
@@ -21,6 +22,15 @@ internal static class Recycling
     private static readonly System.Reflection.MethodInfo HoveredElement = AccessTools.Method(typeof(InventoryGrid), "GetHoveredElement");
     private static readonly System.Reflection.MethodInfo ElementPosition = AccessTools.Method(typeof(InventoryGrid), "GetElementPos");
     private static readonly System.Reflection.MethodInfo SetupDragItem = AccessTools.Method(typeof(InventoryGui), "SetupDragItem", new[] { typeof(ItemDrop.ItemData), typeof(Inventory), typeof(int) });
+    private static readonly System.Reflection.FieldInfo SelectedRecipe = AccessTools.Field(typeof(InventoryGui), "m_selectedRecipe");
+    private static readonly System.Reflection.FieldInfo AvailableRecipes = AccessTools.Field(typeof(InventoryGui), "m_availableRecipes");
+    private static readonly System.Reflection.FieldInfo RecipeItemData = AccessTools.Field(SelectedRecipe.FieldType, "<ItemData>k__BackingField");
+    private static readonly System.Reflection.FieldInfo RecipeInterfaceElement = AccessTools.Field(SelectedRecipe.FieldType, "<InterfaceElement>k__BackingField");
+    // RecipeDataPair is private in Valheim. Read its boxed values through reflection
+    // so the plugin never emits calls or signatures referencing that private type.
+    internal static ItemDrop.ItemData? SelectedItem(InventoryGui gui) => RecipeItemData.GetValue(SelectedRecipe.GetValue(gui)) as ItemDrop.ItemData;
+    internal static IList RecipeList(InventoryGui gui) => (IList)AvailableRecipes.GetValue(gui);
+    internal static GameObject? RecipeElement(object pair) => RecipeInterfaceElement.GetValue(pair) as GameObject;
     internal static void Refresh(InventoryGui gui, bool focus = true) => UpdateCrafting.Invoke(gui, new object[] { focus });
     internal static void AddReclaimRecipe(InventoryGui gui, Player player, Recipe recipe, ItemDrop.ItemData item) => AddRecipe.Invoke(gui, new object[] { player, recipe, item, true });
     internal static void Select(InventoryGui gui, int index) => SelectRecipe.Invoke(gui, new object[] { index, false });
@@ -119,15 +129,19 @@ internal static class ReclaimTabSetup
     }
 }
 
-[HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.UpdateCraftingPanel))]
+[HarmonyPatch(typeof(InventoryGui), "UpdateCraftingPanel")]
 internal static class ReclaimListPatch
 {
-    private static void Postfix(InventoryGui __instance, List<InventoryGui.RecipeDataPair> ___m_availableRecipes)
+    private static void Postfix(InventoryGui __instance)
     {
         if (!Recycling.ReclaimMode || !DadsBetterValPlugin.RecycleEnabled.Value || Player.m_localPlayer == null) return;
-        foreach (InventoryGui.RecipeDataPair pair in ___m_availableRecipes)
-            if (pair.InterfaceElement) UnityEngine.Object.Destroy(pair.InterfaceElement);
-        ___m_availableRecipes.Clear();
+        IList availableRecipes = Recycling.RecipeList(__instance);
+        foreach (object pair in availableRecipes)
+        {
+            GameObject? element = Recycling.RecipeElement(pair);
+            if (element) UnityEngine.Object.Destroy(element);
+        }
+        availableRecipes.Clear();
         foreach (Recipe recipe in Recycling.TemporaryDeleteRecipes) if (recipe) UnityEngine.Object.Destroy(recipe);
         Recycling.TemporaryDeleteRecipes.Clear();
         foreach (ItemDrop.ItemData item in Player.m_localPlayer.GetInventory().GetAllItems())
@@ -136,18 +150,18 @@ internal static class ReclaimListPatch
             Recipe recipe = ObjectDB.instance.GetRecipe(item) ?? Recycling.CreateDeleteRecipe(item);
             Recycling.AddReclaimRecipe(__instance, Player.m_localPlayer, recipe, item);
         }
-        Recycling.Select(__instance, ___m_availableRecipes.Count > 0 ? 0 : -1);
+        Recycling.Select(__instance, availableRecipes.Count > 0 ? 0 : -1);
         Recycling.DrawRecipe(__instance, Player.m_localPlayer);
     }
 }
 
-[HarmonyPatch(typeof(InventoryGui), nameof(InventoryGui.UpdateRecipe))]
+[HarmonyPatch(typeof(InventoryGui), "UpdateRecipe")]
 internal static class ReclaimDetailsPatch
 {
-    private static void Postfix(InventoryGui __instance, InventoryGui.RecipeDataPair ___m_selectedRecipe)
+    private static void Postfix(InventoryGui __instance)
     {
         if (!Recycling.ReclaimMode) return;
-        ItemDrop.ItemData item = ___m_selectedRecipe.ItemData;
+        ItemDrop.ItemData? item = Recycling.SelectedItem(__instance);
         if (item == null) return;
         __instance.m_recipeIcon.sprite = item.GetIcon();
         __instance.m_recipeName.text = "Reclaim " + Localization.instance.Localize(item.m_shared.m_name);
@@ -163,10 +177,10 @@ internal static class ReclaimDetailsPatch
 [HarmonyPatch(typeof(InventoryGui), "OnCraftPressed")]
 internal static class ReclaimActionPatch
 {
-    private static bool Prefix(InventoryGui __instance, InventoryGui.RecipeDataPair ___m_selectedRecipe)
+    private static bool Prefix(InventoryGui __instance)
     {
         if (!Recycling.ReclaimMode) return true;
-        ItemDrop.ItemData item = ___m_selectedRecipe.ItemData;
+        ItemDrop.ItemData? item = Recycling.SelectedItem(__instance);
         if (item != null && Recycling.Recycle(item, Player.m_localPlayer.GetInventory())) Recycling.Refresh(__instance);
         return false;
     }
