@@ -1,5 +1,15 @@
 # Changelog
 
+## 1.2.5
+
+- Fixed Craft remaining disabled after opening Reclaim without a workbench. Reclaim now restores native tab clickability after each crafting-panel refresh while preserving station-specific tab visibility.
+- Removed inherited Upgrade click listeners from the cloned Reclaim button.
+- Includes the crafting-requirements visibility fix from 1.2.4.
+
+## 1.2.4
+
+- Fixed crafting and upgrade material requirements remaining hidden after visiting Reclaim. Reclaim now uses Valheim's native requirement-hiding method, leaving the slot roots active so the game can restore the icons and amounts.
+
 ## 1.2.3
 
 - Fixed Reclaim tab MethodAccessException errors by reading Valheim's private recipe-pair data through cached reflection in the list, details, and action paths.

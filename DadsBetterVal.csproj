@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework><LangVersion>latest</LangVersion><Nullable>enable</Nullable>
-    <AssemblyName>DadsBetterVal</AssemblyName><RootNamespace>DadsBetterVal</RootNamespace><Version>1.2.3</Version>
+    <AssemblyName>DadsBetterVal</AssemblyName><RootNamespace>DadsBetterVal</RootNamespace><Version>1.2.5</Version>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo><Deterministic>true</Deterministic>
     <ValheimManagedPath Condition="'$(ValheimManagedPath)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Valheim\valheim_Data\Managed</ValheimManagedPath>
     <BepInExCorePath Condition="'$(BepInExCorePath)' == ''">C:\Users\DudeB\AppData\Roaming\Thunderstore Mod Manager\DataFolder\Valheim\profiles\Default\BepInEx\core</BepInExCorePath>

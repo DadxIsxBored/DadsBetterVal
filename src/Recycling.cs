@@ -19,6 +19,7 @@ internal static class Recycling
     private static readonly System.Reflection.MethodInfo AddRecipe = AccessTools.Method(typeof(InventoryGui), "AddRecipeToList");
     private static readonly System.Reflection.MethodInfo SelectRecipe = AccessTools.Method(typeof(InventoryGui), "SetRecipe");
     private static readonly System.Reflection.MethodInfo UpdateRecipeMethod = AccessTools.Method(typeof(InventoryGui), "UpdateRecipe");
+    private static readonly System.Reflection.MethodInfo HideRequirementMethod = AccessTools.Method(typeof(InventoryGui), "HideRequirement", new[] { typeof(Transform) });
     private static readonly System.Reflection.MethodInfo HoveredElement = AccessTools.Method(typeof(InventoryGrid), "GetHoveredElement");
     private static readonly System.Reflection.MethodInfo ElementPosition = AccessTools.Method(typeof(InventoryGrid), "GetElementPos");
     private static readonly System.Reflection.MethodInfo SetupDragItem = AccessTools.Method(typeof(InventoryGui), "SetupDragItem", new[] { typeof(ItemDrop.ItemData), typeof(Inventory), typeof(int) });
@@ -35,6 +36,9 @@ internal static class Recycling
     internal static void AddReclaimRecipe(InventoryGui gui, Player player, Recipe recipe, ItemDrop.ItemData item) => AddRecipe.Invoke(gui, new object[] { player, recipe, item, true });
     internal static void Select(InventoryGui gui, int index) => SelectRecipe.Invoke(gui, new object[] { index, false });
     internal static void DrawRecipe(InventoryGui gui, Player player) => UpdateRecipeMethod.Invoke(gui, new object[] { player, 0f });
+    // Keep the slot root active: vanilla SetupRequirement restores its children,
+    // not the root, when switching back to Craft or Upgrade.
+    internal static void HideRequirement(GameObject requirement) => HideRequirementMethod.Invoke(null, new object[] { requirement.transform });
     internal static void ClearDrag(InventoryGui gui) => SetupDragItem.Invoke(gui, new object?[] { null, null, 1 });
     private static void Postfix(InventoryGui __instance, ItemDrop.ItemData? ___m_dragItem)
     {
@@ -124,7 +128,9 @@ internal static class ReclaimTabSetup
         RectTransform source = (RectTransform)__instance.m_tabUpgrade.transform;
         rect.anchoredPosition = source.anchoredPosition + new Vector2(source.rect.width + 8f, 0f);
         TMP_Text label = tab.GetComponentInChildren<TMP_Text>(); if (label) label.text = "Reclaim";
-        Button button = tab.GetComponent<Button>(); Recycling.ReclaimButton = button; button.onClick.RemoveAllListeners();
+        // Replace the event entirely: RemoveAllListeners leaves the cloned
+        // Upgrade tab's serialized listeners attached.
+        Button button = tab.GetComponent<Button>(); Recycling.ReclaimButton = button; button.onClick = new Button.ButtonClickedEvent();
         button.onClick.AddListener(new UnityAction(() => { Recycling.ReclaimMode = true; button.interactable = false; Recycling.Refresh(__instance); }));
     }
 }
@@ -152,6 +158,12 @@ internal static class ReclaimListPatch
         }
         Recycling.Select(__instance, availableRecipes.Count > 0 ? 0 : -1);
         Recycling.DrawRecipe(__instance, Player.m_localPlayer);
+        // Vanilla disables Craft again on every no-station refresh. Apply the
+        // third tab's selection state after that refresh, without exposing tabs
+        // which vanilla hides for this crafting station.
+        __instance.m_tabCraft.interactable = true;
+        __instance.m_tabUpgrade.interactable = true;
+        if (Recycling.ReclaimButton) Recycling.ReclaimButton.interactable = false;
     }
 }
 
@@ -170,7 +182,7 @@ internal static class ReclaimDetailsPatch
         __instance.m_recipeDecription.text = Localization.instance.Localize(ItemDrop.ItemData.GetTooltip(item, item.m_quality, false, Game.m_worldLevel)) + "\n\n" + action;
         TMP_Text label = __instance.m_craftButton.GetComponentInChildren<TMP_Text>(); if (label) label.text = "Reclaim";
         __instance.m_craftButton.interactable = true;
-        foreach (GameObject requirement in __instance.m_recipeRequirementList) requirement.SetActive(false);
+        foreach (GameObject requirement in __instance.m_recipeRequirementList) Recycling.HideRequirement(requirement);
     }
 }
 
