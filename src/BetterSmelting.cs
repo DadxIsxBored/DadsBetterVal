@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using HarmonyLib;
 using UnityEngine;
 
@@ -8,7 +9,10 @@ namespace DadsBetterVal;
 [HarmonyPatch(typeof(Smelter))]
 internal static class BetterSmelting
 {
-    private static string Prefab(Smelter s) => Utils.GetPrefabName(s.gameObject).ToLowerInvariant();
+    private sealed class CachedPrefab { internal string Name = string.Empty; }
+    private static readonly ConditionalWeakTable<Smelter, CachedPrefab> PrefabNames = new();
+    private static string Prefab(Smelter s) => PrefabNames.GetValue(s,
+        smelter => new CachedPrefab { Name = Utils.GetPrefabName(smelter.gameObject).ToLowerInvariant() }).Name;
     private static bool Blast(Smelter s) => Prefab(s).Contains("blastfurnace");
     private static bool AlternativeFuelMachine(Smelter s)
     {

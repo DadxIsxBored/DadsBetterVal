@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.6
+
+- general optimisations
+
 ## 1.2.5
 
 - Fixed Craft remaining disabled after opening Reclaim without a workbench. Reclaim now restores native tab clickability after each crafting-panel refresh while preserving station-specific tab visibility.
