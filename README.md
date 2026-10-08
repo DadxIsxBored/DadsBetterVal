@@ -5,7 +5,7 @@ DadsBetterVal is a single BepInEx plugin for Valheim 1.0.12 that combines five c
 - Radius-based structure repair with normal stamina and tool-durability use for every repaired piece.
 - Inventory recycling and material reclamation through a native crafting-panel `Reclaim` tab or by pointing at an unequipped inventory item and pressing `Delete` by default.
 - An in-game day clock.
-- Smelter, blast furnace, kiln, windmill, spinning wheel, eitr refinery, fermenter, and beehive capacity/speed controls, plus quick insertion and optional alternative fuels.
+- Smelter, blast furnace, kiln, windmill, spinning wheel, eitr refinery, fermenter, beehive, and sap extractor capacity/speed controls, plus quick insertion and optional alternative fuels.
 - Removal of placement and build-station range restrictions.
 
 All settings are stored in `BepInEx/config/com.dadisbored.dadsbetterval.cfg`. The plugin has no mod dependency beyond BepInEx.

@@ -10,7 +10,7 @@ public sealed class DadsBetterValPlugin : BaseUnityPlugin
 {
     public const string Guid = "com.dadisbored.dadsbetterval";
     public const string Name = "DadsBetterVal";
-    public const string Version = "1.2.6";
+    public const string Version = "1.2.7";
     internal static DadsBetterValPlugin Instance = null!;
     internal static ConfigEntry<bool> AreaRepairEnabled = null!;
     internal static ConfigEntry<float> AreaRepairRadius = null!;
@@ -21,8 +21,8 @@ public sealed class DadsBetterValPlugin : BaseUnityPlugin
     internal static ConfigEntry<string> ClockFormat = null!;
     internal static ConfigEntry<int> ClockFontSize = null!;
     internal static ConfigEntry<bool> BuildRestrictionsRemoved = null!;
-    internal static ConfigEntry<int> SmelterOre = null!, SmelterFuel = null!, BlastOre = null!, BlastFuel = null!, KilnInput = null!, WindmillInput = null!, SpinningInput = null!, EitrInput = null!, EitrFuel = null!, HoneyMax = null!;
-    internal static ConfigEntry<float> GlobalSpeed = null!, SmelterSpeed = null!, BlastSpeed = null!, KilnSpeed = null!, WindmillSpeed = null!, SpinningSpeed = null!, EitrSpeed = null!, FermenterSpeed = null!, HoneySpeed = null!;
+    internal static ConfigEntry<int> SmelterOre = null!, SmelterFuel = null!, BlastOre = null!, BlastFuel = null!, KilnInput = null!, WindmillInput = null!, SpinningInput = null!, EitrInput = null!, EitrFuel = null!, HoneyMax = null!, SapExtractorCapacity = null!;
+    internal static ConfigEntry<float> GlobalSpeed = null!, SmelterSpeed = null!, BlastSpeed = null!, KilnSpeed = null!, WindmillSpeed = null!, SpinningSpeed = null!, EitrSpeed = null!, FermenterSpeed = null!, HoneySpeed = null!, SapExtractorSpeed = null!;
     internal static ConfigEntry<bool> AllOresInBlast = null!, WindmillIgnoresWind = null!;
     internal static ConfigEntry<bool> QuickInsert = null!, AlternativeFuel = null!;
     internal static ConfigEntry<KeyCode> QuickInsertKey = null!;
@@ -46,7 +46,9 @@ public sealed class DadsBetterValPlugin : BaseUnityPlugin
         BlastOre = Int("Smelting - Capacity", "Blast Furnace Ore", 10); BlastFuel = Int("Smelting - Capacity", "Blast Furnace Fuel", 20);
         KilnInput = Int("Smelting - Capacity", "Charcoal Kiln Input", 0); WindmillInput = Int("Smelting - Capacity", "Windmill Input", 0);
         SpinningInput = Int("Smelting - Capacity", "Spinning Wheel Input", 0); EitrInput = Int("Smelting - Capacity", "Eitr Refinery Input", 0); EitrFuel = Int("Smelting - Capacity", "Eitr Refinery Fuel", 0); HoneyMax = Int("Smelting - Capacity", "Beehive Honey", 4);
+        SapExtractorCapacity = Int("Smelting - Capacity", "Sap Extractor Capacity", 0);
         GlobalSpeed = Float("Smelting - Speed", "Global Multiplier", 1f); SmelterSpeed = Float("Smelting - Speed", "Smelter Multiplier", 1f); BlastSpeed = Float("Smelting - Speed", "Blast Furnace Multiplier", 1f); KilnSpeed = Float("Smelting - Speed", "Charcoal Kiln Multiplier", 1f); WindmillSpeed = Float("Smelting - Speed", "Windmill Multiplier", 1f); SpinningSpeed = Float("Smelting - Speed", "Spinning Wheel Multiplier", 1f); EitrSpeed = Float("Smelting - Speed", "Eitr Refinery Multiplier", 1f); FermenterSpeed = Float("Smelting - Speed", "Fermenter Multiplier", 1f); HoneySpeed = Float("Smelting - Speed", "Beehive Multiplier", 1f);
+        SapExtractorSpeed = Float("Smelting - Speed", "Sap Extractor Multiplier", 1f);
         AllOresInBlast = Config.Bind("Smelting", "All Ores In Blast Furnace", true, "Allow normal smelter conversions in the blast furnace.");
         WindmillIgnoresWind = Config.Bind("Smelting", "Windmill Ignores Wind", false, "Run windmills at full power.");
         QuickInsert = Config.Bind("Smelting", "Quick Insert", true, "Hold the configured key while using a machine to fill it.");

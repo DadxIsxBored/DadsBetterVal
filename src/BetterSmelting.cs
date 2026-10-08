@@ -155,6 +155,17 @@ internal static class BeehivePatch
     }
 }
 
+[HarmonyPatch(typeof(SapCollector), "Awake")]
+internal static class SapExtractorPatch
+{
+    private static void Postfix(SapCollector __instance)
+    {
+        if (DadsBetterValPlugin.SapExtractorCapacity.Value > 0)
+            __instance.m_maxLevel = DadsBetterValPlugin.SapExtractorCapacity.Value;
+        __instance.m_secPerUnit /= DadsBetterValPlugin.SapExtractorSpeed.Value;
+    }
+}
+
 [HarmonyPatch(typeof(Fermenter), "Awake")]
 internal static class FermenterPatch { private static void Postfix(Fermenter __instance) => __instance.m_fermentationDuration /= DadsBetterValPlugin.FermenterSpeed.Value; }
 
