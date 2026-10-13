@@ -36,3 +36,13 @@ internal static class StationRangePatch
         __result = _station;
     }
 }
+
+[HarmonyPatch(typeof(Plant), nameof(Plant.UpdateHealth))]
+internal static class CropGrowingRestrictionsPatch
+{
+    private static void Postfix(Plant __instance, ref Plant.Status ___m_status)
+    {
+        if (DadsBetterValPlugin.BypassCropGrowingRestrictions.Value && __instance.m_needCultivatedGround)
+            ___m_status = Plant.Status.Healthy;
+    }
+}

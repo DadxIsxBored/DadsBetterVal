@@ -10,7 +10,7 @@ public sealed class DadsBetterValPlugin : BaseUnityPlugin
 {
     public const string Guid = "com.dadisbored.dadsbetterval";
     public const string Name = "DadsBetterVal";
-    public const string Version = "1.2.8";
+    public const string Version = "1.2.9";
     internal static DadsBetterValPlugin Instance = null!;
     internal static ConfigEntry<bool> AreaRepairEnabled = null!;
     internal static ConfigEntry<float> AreaRepairRadius = null!;
@@ -21,6 +21,7 @@ public sealed class DadsBetterValPlugin : BaseUnityPlugin
     internal static ConfigEntry<string> ClockFormat = null!;
     internal static ConfigEntry<int> ClockFontSize = null!;
     internal static ConfigEntry<bool> BuildRestrictionsRemoved = null!;
+    internal static ConfigEntry<bool> BypassCropGrowingRestrictions = null!;
     internal static ConfigEntry<int> SmelterOre = null!, SmelterFuel = null!, BlastOre = null!, BlastFuel = null!, KilnInput = null!, WindmillInput = null!, SpinningInput = null!, EitrInput = null!, EitrFuel = null!, HoneyMax = null!, SapExtractorCapacity = null!, StoneOvenCapacity = null!;
     internal static ConfigEntry<float> GlobalSpeed = null!, SmelterSpeed = null!, BlastSpeed = null!, KilnSpeed = null!, WindmillSpeed = null!, SpinningSpeed = null!, EitrSpeed = null!, FermenterSpeed = null!, HoneySpeed = null!, SapExtractorSpeed = null!, StoneOvenSpeed = null!;
     internal static ConfigEntry<bool> AllOresInBlast = null!, WindmillIgnoresWind = null!;
@@ -42,6 +43,7 @@ public sealed class DadsBetterValPlugin : BaseUnityPlugin
         ClockFormat = Config.Bind("Clock", "Format", "hh:mm tt", "Clock format: HH, hh, mm, ss, tt, DAY.");
         ClockFontSize = Config.Bind("Clock", "Font Size", 24, new ConfigDescription("Clock text size.", new AcceptableValueRange<int>(10, 72)));
         BuildRestrictionsRemoved = Config.Bind("Build Restrictions", "Remove All Restrictions", true, "Make placement valid in restricted locations and conditions.");
+        BypassCropGrowingRestrictions = Config.Bind("Build Restrictions", "Bypass Crop Growing Restrictions", false, "Allow cultivated crops to grow regardless of biome, cultivated ground, roof, spacing, or temperature.");
         SmelterOre = Int("Smelting - Capacity", "Smelter Ore", 10); SmelterFuel = Int("Smelting - Capacity", "Smelter Fuel", 20);
         BlastOre = Int("Smelting - Capacity", "Blast Furnace Ore", 10); BlastFuel = Int("Smelting - Capacity", "Blast Furnace Fuel", 20);
         KilnInput = Int("Smelting - Capacity", "Charcoal Kiln Input", 0); WindmillInput = Int("Smelting - Capacity", "Windmill Input", 0);
