@@ -171,3 +171,38 @@ internal static class FermenterPatch { private static void Postfix(Fermenter __i
 
 [HarmonyPatch(typeof(Windmill), "GetPowerOutput")]
 internal static class WindmillPatch { private static void Postfix(ref float __result) { if (DadsBetterValPlugin.WindmillIgnoresWind.Value) __result = 1f; } }
+
+[HarmonyPatch(typeof(CookingStation))]
+internal static class StoneOvenPatch
+{
+    private static bool IsStoneOven(CookingStation station) =>
+        Utils.GetPrefabName(station.gameObject).Equals("piece_oven", StringComparison.OrdinalIgnoreCase);
+
+    [HarmonyPatch("Awake"), HarmonyPrefix]
+    private static void AwakePrefix(CookingStation __instance)
+    {
+        if (!IsStoneOven(__instance)) return;
+        Transform[] original = __instance.m_slots;
+        int capacity = DadsBetterValPlugin.StoneOvenCapacity.Value;
+        if (original == null || original.Length == 0 || capacity <= original.Length) return;
+
+        Transform[] slots = new Transform[capacity];
+        Array.Copy(original, slots, original.Length);
+        for (int i = original.Length; i < slots.Length; i++)
+        {
+            Transform source = original[i % original.Length];
+            Transform slot = UnityEngine.Object.Instantiate(source, source.parent);
+            slot.name = $"DadsBetterVal_OvenSlot_{i}";
+            slot.localPosition = source.localPosition + Vector3.back * (0.18f * (i / original.Length));
+            slots[i] = slot;
+        }
+        __instance.m_slots = slots;
+    }
+
+    [HarmonyPatch("GetDeltaTime"), HarmonyPostfix]
+    private static void DeltaPostfix(CookingStation __instance, ref float __result)
+    {
+        if (IsStoneOven(__instance))
+            __result *= DadsBetterValPlugin.GlobalSpeed.Value * DadsBetterValPlugin.StoneOvenSpeed.Value;
+    }
+}

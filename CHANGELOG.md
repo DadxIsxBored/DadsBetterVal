@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.8
+
+- Added stone oven cooking-slot capacity and speed sliders under the existing smelting settings.
+
 ## 1.2.7
 
 - Added Sap Extractor capacity and speed sliders under the existing smelting settings.
