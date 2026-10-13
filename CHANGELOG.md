@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.2.10
+
+- Made smelting speed sliders whole-number multipliers and capped general smelting capacity sliders at 1000.
+- Made stone oven speed independent of the global multiplier so a stone oven value of 1 uses native cooking speed.
+
 ## 1.2.9
 
 - Added a separate toggle to bypass native growing restrictions for cultivated crops.

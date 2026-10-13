@@ -203,6 +203,6 @@ internal static class StoneOvenPatch
     private static void DeltaPostfix(CookingStation __instance, ref float __result)
     {
         if (IsStoneOven(__instance))
-            __result *= DadsBetterValPlugin.GlobalSpeed.Value * DadsBetterValPlugin.StoneOvenSpeed.Value;
+            __result *= DadsBetterValPlugin.StoneOvenSpeed.Value;
     }
 }

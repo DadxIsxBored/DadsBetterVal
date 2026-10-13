@@ -10,6 +10,8 @@ DadsBetterVal is a single BepInEx plugin for Valheim 1.0.12 that combines five c
 
 The **Bypass Crop Growing Restrictions** setting under **Build Restrictions** lets cultivated crops grow regardless of biome, cultivated ground, roof, spacing, or temperature. It is disabled by default and does not affect trees or vines.
 
+Smelting speed sliders use whole-number multipliers. The stone oven multiplier is independent of the global multiplier; `1` uses native oven cooking speed. General smelting capacity sliders range from `0` to `1000`, with `0` preserving the game capacity.
+
 All settings are stored in `BepInEx/config/com.dadisbored.dadsbetterval.cfg`. The plugin has no mod dependency beyond BepInEx.
 
 Recycling performs a full inventory-capacity preflight. The item is removed once, and only after the complete return transaction has been validated.
