@@ -59,6 +59,7 @@ internal static class BetterSmelting
     {
         string name = Prefab(__instance);
         if (name == "charcoal_kiln") SetOre(__instance, DadsBetterValPlugin.KilnInput.Value);
+        else if (name == "piece_frostkiln") SetOre(__instance, DadsBetterValPlugin.FrostKilnInput.Value);
         else if (__instance.m_windmill) SetOre(__instance, DadsBetterValPlugin.WindmillInput.Value);
         else if (name == "piece_spinningwheel") SetOre(__instance, DadsBetterValPlugin.SpinningInput.Value);
         else if (name == "eitrrefinery") { SetOre(__instance, DadsBetterValPlugin.EitrInput.Value); SetFuel(__instance, DadsBetterValPlugin.EitrFuel.Value); }
@@ -88,6 +89,7 @@ internal static class BetterSmelting
     {
         string name = Prefab(__instance); float multiplier = DadsBetterValPlugin.GlobalSpeed.Value;
         if (name == "charcoal_kiln") multiplier *= DadsBetterValPlugin.KilnSpeed.Value;
+        else if (name == "piece_frostkiln") multiplier *= DadsBetterValPlugin.FrostKilnSpeed.Value;
         else if (__instance.m_windmill) multiplier *= DadsBetterValPlugin.WindmillSpeed.Value;
         else if (name == "piece_spinningwheel") multiplier *= DadsBetterValPlugin.SpinningSpeed.Value;
         else if (name == "eitrrefinery") multiplier *= DadsBetterValPlugin.EitrSpeed.Value;

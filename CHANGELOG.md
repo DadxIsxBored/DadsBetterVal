@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.11
+
+- Added Frost Kiln input capacity and processing speed controls.
+
 ## 1.2.10
 
 - Made smelting speed sliders whole-number multipliers and capped general smelting capacity sliders at 1000.

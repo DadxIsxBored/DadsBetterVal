@@ -10,7 +10,7 @@ public sealed class DadsBetterValPlugin : BaseUnityPlugin
 {
     public const string Guid = "com.dadisbored.dadsbetterval";
     public const string Name = "DadsBetterVal";
-    public const string Version = "1.2.10";
+    public const string Version = "1.2.11";
     internal static DadsBetterValPlugin Instance = null!;
     internal static ConfigEntry<bool> AreaRepairEnabled = null!;
     internal static ConfigEntry<float> AreaRepairRadius = null!;
@@ -22,8 +22,8 @@ public sealed class DadsBetterValPlugin : BaseUnityPlugin
     internal static ConfigEntry<int> ClockFontSize = null!;
     internal static ConfigEntry<bool> BuildRestrictionsRemoved = null!;
     internal static ConfigEntry<bool> BypassCropGrowingRestrictions = null!;
-    internal static ConfigEntry<int> SmelterOre = null!, SmelterFuel = null!, BlastOre = null!, BlastFuel = null!, KilnInput = null!, WindmillInput = null!, SpinningInput = null!, EitrInput = null!, EitrFuel = null!, HoneyMax = null!, SapExtractorCapacity = null!, StoneOvenCapacity = null!;
-    internal static ConfigEntry<int> GlobalSpeed = null!, SmelterSpeed = null!, BlastSpeed = null!, KilnSpeed = null!, WindmillSpeed = null!, SpinningSpeed = null!, EitrSpeed = null!, FermenterSpeed = null!, HoneySpeed = null!, SapExtractorSpeed = null!, StoneOvenSpeed = null!;
+    internal static ConfigEntry<int> SmelterOre = null!, SmelterFuel = null!, BlastOre = null!, BlastFuel = null!, KilnInput = null!, FrostKilnInput = null!, WindmillInput = null!, SpinningInput = null!, EitrInput = null!, EitrFuel = null!, HoneyMax = null!, SapExtractorCapacity = null!, StoneOvenCapacity = null!;
+    internal static ConfigEntry<int> GlobalSpeed = null!, SmelterSpeed = null!, BlastSpeed = null!, KilnSpeed = null!, FrostKilnSpeed = null!, WindmillSpeed = null!, SpinningSpeed = null!, EitrSpeed = null!, FermenterSpeed = null!, HoneySpeed = null!, SapExtractorSpeed = null!, StoneOvenSpeed = null!;
     internal static ConfigEntry<bool> AllOresInBlast = null!, WindmillIgnoresWind = null!;
     internal static ConfigEntry<bool> QuickInsert = null!, AlternativeFuel = null!;
     internal static ConfigEntry<KeyCode> QuickInsertKey = null!;
@@ -46,11 +46,11 @@ public sealed class DadsBetterValPlugin : BaseUnityPlugin
         BypassCropGrowingRestrictions = Config.Bind("Build Restrictions", "Bypass Crop Growing Restrictions", false, "Allow cultivated crops to grow regardless of biome, cultivated ground, roof, spacing, or temperature.");
         SmelterOre = Capacity("Smelter Ore", 10); SmelterFuel = Capacity("Smelter Fuel", 20);
         BlastOre = Capacity("Blast Furnace Ore", 10); BlastFuel = Capacity("Blast Furnace Fuel", 20);
-        KilnInput = Capacity("Charcoal Kiln Input", 0); WindmillInput = Capacity("Windmill Input", 0);
+        KilnInput = Capacity("Charcoal Kiln Input", 0); FrostKilnInput = Capacity("Frost Kiln Input", 0); WindmillInput = Capacity("Windmill Input", 0);
         SpinningInput = Capacity("Spinning Wheel Input", 0); EitrInput = Capacity("Eitr Refinery Input", 0); EitrFuel = Capacity("Eitr Refinery Fuel", 0); HoneyMax = Capacity("Beehive Honey", 4);
         SapExtractorCapacity = Capacity("Sap Extractor Capacity", 0);
         StoneOvenCapacity = Config.Bind("Smelting - Capacity", "Stone Oven Capacity", 0, new ConfigDescription("Total stone oven cooking slots. Zero preserves the game value; values below the game value keep the existing slots.", new AcceptableValueRange<int>(0, 20)));
-        GlobalSpeed = Speed("Global Multiplier"); SmelterSpeed = Speed("Smelter Multiplier"); BlastSpeed = Speed("Blast Furnace Multiplier"); KilnSpeed = Speed("Charcoal Kiln Multiplier"); WindmillSpeed = Speed("Windmill Multiplier"); SpinningSpeed = Speed("Spinning Wheel Multiplier"); EitrSpeed = Speed("Eitr Refinery Multiplier"); FermenterSpeed = Speed("Fermenter Multiplier"); HoneySpeed = Speed("Beehive Multiplier");
+        GlobalSpeed = Speed("Global Multiplier"); SmelterSpeed = Speed("Smelter Multiplier"); BlastSpeed = Speed("Blast Furnace Multiplier"); KilnSpeed = Speed("Charcoal Kiln Multiplier"); FrostKilnSpeed = Speed("Frost Kiln Multiplier"); WindmillSpeed = Speed("Windmill Multiplier"); SpinningSpeed = Speed("Spinning Wheel Multiplier"); EitrSpeed = Speed("Eitr Refinery Multiplier"); FermenterSpeed = Speed("Fermenter Multiplier"); HoneySpeed = Speed("Beehive Multiplier");
         SapExtractorSpeed = Speed("Sap Extractor Multiplier");
         StoneOvenSpeed = Speed("Stone Oven Multiplier");
         AllOresInBlast = Config.Bind("Smelting", "All Ores In Blast Furnace", true, "Allow normal smelter conversions in the blast furnace.");
